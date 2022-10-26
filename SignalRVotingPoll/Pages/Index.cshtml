@@ -2,10 +2,71 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+
+    var isAdmin = false;
+    if (Request.Query["admin"] == "42")
+        isAdmin = true;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (isAdmin)
+{
+    <div class="text-center">
+        <h1 class="display-4">How do you like Gerald today?</h1>
+        <canvas id="myChart" style="display: block; margin: 0 auto;" width="600" height="400"></canvas>
+        <button id="resetButton" class="btn-lg btn-primary">Reset</button>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">How do you like Gerald today?</h1>
+        <p id="statusLabel">Vote below!</p>
+        <button id="awesomeButton" class="btn-lg btn-primary">AWESUMMM</button>
+        <button id="mehButton" class="btn-lg btn-primary">Meh</button>
+    </div>
+}
 
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+    @if (!isAdmin)
+        {
+        <script src="~/js/votingClient.js"></script>
+        }
+    else
+    {
+        <script src="~/js/votingServer.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+        <script>const ctx = document.getElementById('myChart');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['AWESUMMM', 'Meh'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [0, 0],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            max: 50,
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });</script>
+    }
+}
